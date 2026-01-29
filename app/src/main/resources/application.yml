@@ -1,0 +1,19 @@
+spring:
+  jpa:
+    show-sql: true       # вывод SQL-запросов
+    hibernate:
+      ddl-auto: update
+  output:
+    ansi:
+      enabled: always    # цветной вывод логотипа
+
+logging:
+  pattern:
+    dateformat: "yyyy-MM-dd HH:mm:ss"  # кастомный формат даты в логах
+
+app:
+  welcome-message: "Welcome to Spring blog!"  # наше кастомное сообщение
+
+rsa:
+  private-key: classpath:certs/private.pem
+  public-key: classpath:certs/public.pem
