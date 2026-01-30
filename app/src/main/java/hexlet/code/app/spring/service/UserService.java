@@ -1,8 +1,8 @@
 package hexlet.code.app.spring.service;
 
-import dto.UserDTO;
-import dto.create.UserCreateDTO;
-import dto.update.UserUpdateDTO;
+import hexlet.code.app.spring.dto.UserDTO;
+import hexlet.code.app.spring.dto.create.UserCreateDTO;
+import hexlet.code.app.spring.dto.update.UserUpdateDTO;
 import hexlet.code.app.spring.mapper.UserMapper;
 import hexlet.code.app.spring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package dto.create;
+package hexlet.code.app.spring.dto.create;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;

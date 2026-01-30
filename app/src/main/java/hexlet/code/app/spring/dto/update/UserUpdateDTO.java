@@ -1,4 +1,4 @@
-package dto.update;
+package hexlet.code.app.spring.dto.update;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

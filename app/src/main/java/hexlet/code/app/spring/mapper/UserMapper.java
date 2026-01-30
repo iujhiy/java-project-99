@@ -1,8 +1,8 @@
 package hexlet.code.app.spring.mapper;
 
-import dto.UserDTO;
-import dto.create.UserCreateDTO;
-import dto.update.UserUpdateDTO;
+import hexlet.code.app.spring.dto.UserDTO;
+import hexlet.code.app.spring.dto.create.UserCreateDTO;
+import hexlet.code.app.spring.dto.update.UserUpdateDTO;
 import hexlet.code.app.spring.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -26,12 +26,16 @@ public abstract class UserMapper {
 
     public abstract UserDTO map(User model);
 
-    @Mapping(target = "password", qualifiedByName = "encodePassword")
+    @Mapping(target = "passwordDigest", source = "password",
+            qualifiedByName = "encodePassword")
     public abstract User map(UserCreateDTO dto);
+
     public abstract User map(UserDTO dto);
+
     public abstract UserCreateDTO create(User model);
 
-    @Mapping(target = "password", qualifiedByName = "encodePassword")
+    @Mapping(target = "passwordDigest", source = "password",
+            qualifiedByName = "encodePassword")
     public abstract void update(UserUpdateDTO dto, @MappingTarget User model);
 
     @Named("encodePassword")

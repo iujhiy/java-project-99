@@ -13,7 +13,7 @@ public class UserUtilsTest {
                 .ignore(Select.field(User::getId))
                 .ignore(Select.field(User::getCreatedAt))
                 .ignore(Select.field(User::getUpdatedAt))
-                .supply(Select.field(User::getPassword), () -> faker.internet().password())
+                .supply(Select.field(User::getPasswordDigest), () -> faker.internet().password())
                 .supply(Select.field(User::getFirstName), () -> faker.name().firstName())
                 .supply(Select.field(User::getLastName), () -> faker.name().lastName())
                 .supply(Select.field(User::getEmail), () -> faker.internet().emailAddress())

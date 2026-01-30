@@ -1,4 +1,4 @@
-package dto;
+package hexlet.code.app.spring.dto;
 
 import lombok.Getter;
 import lombok.Setter;
