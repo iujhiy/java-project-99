@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,10 +31,8 @@ public class User implements BaseEntity {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @NotBlank(message = "Имя не может быть пустым")
     private String firstName;
 
-    @NotBlank(message = "Фамилия не может быть пустая")
     private String lastName;
 
     @Email
@@ -41,6 +40,7 @@ public class User implements BaseEntity {
     private String email;
 
     @NotBlank
+    @Size(min = 3, message = "Пароль должен быть минимум 3 символа")
     private String password;
 
     @CreatedDate

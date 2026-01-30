@@ -13,7 +13,3 @@ logging:
 
 app:
   welcome-message: "Welcome to Spring blog!"  # наше кастомное сообщение
-
-rsa:
-  private-key: classpath:certs/private.pem
-  public-key: classpath:certs/public.pem
