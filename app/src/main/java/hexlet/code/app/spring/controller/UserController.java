@@ -4,10 +4,12 @@ import hexlet.code.app.spring.dto.UserDTO;
 import hexlet.code.app.spring.dto.create.UserCreateDTO;
 import hexlet.code.app.spring.dto.update.UserUpdateDTO;
 import hexlet.code.app.spring.service.UserService;
+import hexlet.code.app.spring.util.UserUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +28,9 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserUtils userUtils;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -48,16 +53,16 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("@userUtils.isCurrentUser(#id)")
     public ResponseEntity<UserDTO> update(@PathVariable Long id,
                                           @Valid @RequestBody UserUpdateDTO dto) {
         var userDTO = userService.update(id, dto);
-        return ResponseEntity
-                .created(URI.create("api/users/" + userDTO.getId()))
-                .body(userDTO);
+        return ResponseEntity.ok(userDTO);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("@userUtils.isCurrentUser(#id)") // возвращает 500 статус вместо 403
     public void destroy(@PathVariable Long id) {
         userService.deleteUser(id);
     }

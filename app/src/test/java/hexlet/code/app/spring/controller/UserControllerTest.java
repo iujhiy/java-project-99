@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import utils.ExceptionUtils;
 
@@ -24,6 +25,7 @@ import java.util.List;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -31,7 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 @SpringBootTest
-@AutoConfigureMockMvc(addFilters = false) // disable
+@AutoConfigureMockMvc
 public class UserControllerTest {
     @Autowired
     private UserRepository userRepository;
@@ -45,6 +47,8 @@ public class UserControllerTest {
     @Autowired
     private ObjectMapper om;
 
+    private SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor token;
+
     private final UserUtilsTest userUtils = new UserUtilsTest();
 
     private User testUser;
@@ -54,11 +58,12 @@ public class UserControllerTest {
         userRepository.deleteAll();
         testUser = userUtils.createUser();
         userRepository.save(testUser);
+        token = jwt().jwt(builder -> builder.subject(testUser.getEmail()));
     }
 
     @Test
     public void testIndex() throws Exception {
-        var result = mockMvc.perform(get("/api/users"))
+        var result = mockMvc.perform(get("/api/users").with(token))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -74,6 +79,7 @@ public class UserControllerTest {
         var user = userUtils.createUser();
         var userCreateDTO = userMapper.create(user);
         var request = post("/api/users")
+                .with(token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsString(userCreateDTO));
 
@@ -95,11 +101,12 @@ public class UserControllerTest {
         data.put("firstName", JsonNullable.of("John"));
         var id = testUser.getId();
         var request = put("/api/users/" + id)
+                .with(token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsString(data));
 
         mockMvc.perform(request)
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
 
         var user = userRepository.findById(id)
                 .orElseThrow(() -> ExceptionUtils.throwResourceNotFoundException("user", id));
@@ -108,7 +115,7 @@ public class UserControllerTest {
 
     @Test
     public void testShow() throws Exception {
-        var request = get("/api/users/" + testUser.getId());
+        var request = get("/api/users/" + testUser.getId()).with(token);
         var result = mockMvc.perform(request)
                 .andExpect(status().isOk())
                 .andReturn();
@@ -122,7 +129,7 @@ public class UserControllerTest {
 
     @Test
     public void testDestroy() throws Exception {
-        var request = delete("/api/users/" + testUser.getId());
+        var request = delete("/api/users/" + testUser.getId()).with(token);
         mockMvc.perform(request)
                 .andExpect(status().isNoContent());
 
