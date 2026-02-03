@@ -71,6 +71,8 @@ public class UserControllerTest {
         List<UserDTO> userDTOs = om.readValue(body, new TypeReference<>() { });
         var usersList = userDTOs.stream().map(userMapper::map).toList();
         var expected = userRepository.findAll();
+        String totalCountHeader = result.getResponse().getHeader("X-Total-Count");
+        assertThat(totalCountHeader).isEqualTo("2");
         Assertions.assertThat(usersList).containsExactlyInAnyOrderElementsOf(expected);
     }
 
@@ -88,7 +90,10 @@ public class UserControllerTest {
 
         var result = userRepository.findByEmail(userCreateDTO.getEmail())
                 .orElseThrow(() -> ExceptionUtils
-                        .throwResourceNotFoundException("user", userCreateDTO.getEmail()));
+                        .throwResourceNotFoundException("user",
+                                userCreateDTO.getEmail(),
+                                "testCreateUser"
+                        ));
         assertNotNull(result);
         assertThat(userCreateDTO.getFirstName()).isEqualTo(result.getFirstName());
         assertThat(userCreateDTO.getLastName()).isEqualTo(result.getLastName());
@@ -109,7 +114,7 @@ public class UserControllerTest {
                 .andExpect(status().isOk());
 
         var user = userRepository.findById(id)
-                .orElseThrow(() -> ExceptionUtils.throwResourceNotFoundException("user", id));
+                .orElseThrow(() -> ExceptionUtils.throwResourceNotFoundException("user", id, "testUpdateUser"));
         assertThat(user.getFirstName()).isEqualTo("John");
     }
 

@@ -4,6 +4,7 @@ import hexlet.code.app.spring.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -37,11 +38,35 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    HandlerMappingIntrospector introspector)
             throws Exception {
+//        http
+//                .authorizeHttpRequests(auth -> auth
+//                        // Временно разрешить ВСЕ запросы
+//                        .anyRequest().permitAll()
+//                );
+//
+//        return http.build();
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/",
+                                "/index.html",
+                                "/favicon.ico",
+                                "/static/**",
+                                "/css/**",
+                                "/js/**",
+                                "/assets/**",
+                                "/*.js",
+                                "/*.css",
+                                "/*.json",
+                                "/*.png",
+                                "/*.jpg",
+                                "/*.ico",
+                                "/error"
+                        ).permitAll()
                         .requestMatchers("/api/login").permitAll()
-                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/welcome").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/task_statuses").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer((rs) -> rs.jwt((jwt) -> jwt.decoder(jwtDecoder)))

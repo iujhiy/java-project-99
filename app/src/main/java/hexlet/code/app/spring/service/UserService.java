@@ -11,6 +11,7 @@ import utils.ExceptionUtils;
 
 import java.util.List;
 
+
 @Service
 public class UserService {
     @Autowired
@@ -19,14 +20,15 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-    public List<UserDTO> getAll() {
+    public List<UserDTO> getAll(Integer number, Integer size) {
+//        var pageRequest = PageRequest.of(number - 1, size);
         return userRepository.findAll().stream().map(userMapper::map).toList();
     }
 
     public UserDTO getUserDTO(Long id) {
         var user = userRepository.findById(id)
                 .orElseThrow(() -> ExceptionUtils
-                        .throwResourceNotFoundException("user", id));
+                        .throwResourceNotFoundException("user", id, "userCreate"));
         return userMapper.map(user);
     }
 
@@ -39,7 +41,7 @@ public class UserService {
     public UserDTO update(Long id, UserUpdateDTO dto) {
         var user = userRepository.findById(id)
                 .orElseThrow(() -> ExceptionUtils
-                        .throwResourceNotFoundException("user", id));
+                        .throwResourceNotFoundException("user", id, "userUpdate"));
         userMapper.update(dto, user);
         userRepository.save(user);
         return userMapper.map(user);
