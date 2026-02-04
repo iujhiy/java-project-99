@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Getter
 @Setter
 public class UserCreateDTO {
@@ -21,4 +23,6 @@ public class UserCreateDTO {
     @NotBlank
     @Size(min = 3, message = "Пароль должен быть минимум 3 символа")
     private String password;
+
+    private Set<Long> taskIds;
 }

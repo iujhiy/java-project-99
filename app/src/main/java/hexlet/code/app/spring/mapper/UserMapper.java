@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Mapper(
-    uses = {JsonNullableMapper.class},
+    uses = {JsonNullableMapper.class, ReferenceMapper.class},
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
     componentModel = MappingConstants.ComponentModel.SPRING,
     unmappedTargetPolicy = ReportingPolicy.IGNORE
@@ -28,14 +28,18 @@ public abstract class UserMapper {
 
     @Mapping(target = "passwordDigest", source = "password",
             qualifiedByName = "encodePassword")
+    @Mapping(target = "tasks", source = "taskIds")
     public abstract User map(UserCreateDTO dto);
 
+    @Mapping(target = "tasks", source = "taskIds")
     public abstract User map(UserDTO dto);
 
+    @Mapping(target = "taskIds", source = "tasks")
     public abstract UserCreateDTO create(User model);
 
     @Mapping(target = "passwordDigest", source = "password",
             qualifiedByName = "encodePassword")
+    @Mapping(target = "tasks", source = "taskIds")
     public abstract void update(UserUpdateDTO dto, @MappingTarget User model);
 
     @Named("encodePassword")

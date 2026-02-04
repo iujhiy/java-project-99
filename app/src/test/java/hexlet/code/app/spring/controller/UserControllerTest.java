@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.app.spring.dto.UserDTO;
 import hexlet.code.app.spring.mapper.UserMapper;
+import hexlet.code.app.spring.repository.TaskRepository;
 import hexlet.code.app.spring.repository.UserRepository;
 import hexlet.code.app.spring.model.User;
 import hexlet.code.app.utils.UserUtilsTest;
@@ -39,6 +40,9 @@ public class UserControllerTest {
     private UserRepository userRepository;
 
     @Autowired
+    private TaskRepository taskRepository;
+
+    @Autowired
     private MockMvc mockMvc;
 
     @Autowired
@@ -55,6 +59,7 @@ public class UserControllerTest {
 
     @BeforeEach
     public void setUp() {
+        taskRepository.deleteAll();
         userRepository.deleteAll();
         testUser = userUtils.createUser();
         userRepository.save(testUser);
@@ -63,6 +68,11 @@ public class UserControllerTest {
 
     @Test
     public void testIndex() throws Exception {
+        var anotherUser = userUtils.createUser();
+        mockMvc.perform(post("/api/users")
+                .with(token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsString(anotherUser)));
         var result = mockMvc.perform(get("/api/users").with(token))
                 .andExpect(status().isOk())
                 .andReturn();

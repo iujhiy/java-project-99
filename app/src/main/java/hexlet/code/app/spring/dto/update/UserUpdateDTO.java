@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.openapitools.jackson.nullable.JsonNullable;
 
+import java.util.Set;
+
 @Getter
 @Setter
 public class UserUpdateDTO {
@@ -22,4 +24,7 @@ public class UserUpdateDTO {
     @NotBlank
     @Size(min = 3)
     private JsonNullable<String> password = JsonNullable.undefined();
+
+    private JsonNullable<Set<Long>> taskIds;
+
 }

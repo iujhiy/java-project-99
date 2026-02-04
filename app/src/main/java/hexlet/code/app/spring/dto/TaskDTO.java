@@ -4,15 +4,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 @Getter
 @Setter
-public class UserDTO {
+public class TaskDTO {
     private Long id;
-    private String firstName;
-    private String lastName;
-    private String email;
+    private Integer index;
+    private String content;
+    private String status;
+    private String title;
+    private Long assigneeId;
     private LocalDate createdAt;
-    private Set<Long> taskIds;
 }
