@@ -1,6 +1,7 @@
 package hexlet.code.app.spring.mapper;
 
 import hexlet.code.app.spring.model.BaseEntity;
+import hexlet.code.app.spring.model.Label;
 import hexlet.code.app.spring.model.Task;
 import hexlet.code.app.spring.model.User;
 import jakarta.persistence.EntityManager;
@@ -23,6 +24,10 @@ public class ReferenceMapper {
 
     public Set<Task> toTask(JsonNullable<Set<Long>> jsonSet) {
         return toSet(jsonSet, Task.class);
+    }
+
+    public Set<Label> toLabel(JsonNullable<Set<Long>> jsonSet) {
+        return toSet(jsonSet, Label.class);
     }
 
     public Set<User> toUsers(JsonNullable<Set<Long>> jsonSet) {
@@ -61,6 +66,15 @@ public class ReferenceMapper {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public <T extends BaseEntity> Set<Long> toSetLong(Set<T> entities) {
+        if (entities == null || entities.isEmpty()) {
+            return null;
+        }
+        return entities.stream()
+                .map(this::toId)
+                .collect(Collectors.toSet());
     }
 
 }

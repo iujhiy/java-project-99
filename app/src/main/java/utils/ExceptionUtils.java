@@ -4,14 +4,14 @@ import hexlet.code.app.spring.exception.ResourceNotFoundException;
 
 public class ExceptionUtils {
     public static ResourceNotFoundException throwResourceNotFoundException(
-            String entityName, long id, String methodName) {
-        throw new ResourceNotFoundException(entityName + " with id '" + id + "' not found in '" + methodName + " '");
+            String entityName, long id) {
+        throw new ResourceNotFoundException(entityName + " with id '" + id + "' not found");
     }
 
     public static ResourceNotFoundException throwResourceNotFoundException(
-            String entityName, String email, String methodName) {
+            String entityName, String email) {
         throw new ResourceNotFoundException(
-                entityName + " with email '" + email + "' not found in '" + methodName + " '"
+                entityName + " with email '" + email + "' not found"
         );
     }
 }

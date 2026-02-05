@@ -27,7 +27,7 @@ public class TaskStatusService {
     public TaskStatusDTO getTaskStatusDTO(Long id) {
         var taskStatus = taskStatusRepository.findById(id)
                 .orElseThrow(() -> ExceptionUtils
-                        .throwResourceNotFoundException("taskStatus", id, "taskStatusCreate"));
+                        .throwResourceNotFoundException("taskStatus", id));
         return taskStatusMapper.map(taskStatus);
     }
 
@@ -40,7 +40,7 @@ public class TaskStatusService {
     public TaskStatusDTO update(Long id, TaskStatusUpdateDTO dto) {
         var taskStatus = taskStatusRepository.findById(id)
                 .orElseThrow(() -> ExceptionUtils
-                        .throwResourceNotFoundException("taskStatus", id, "taskStatusUpdate"));
+                        .throwResourceNotFoundException("taskStatus", id));
         taskStatusMapper.update(dto, taskStatus);
         taskStatusRepository.save(taskStatus);
         return taskStatusMapper.map(taskStatus);

@@ -5,12 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.app.spring.dto.TaskDTO;
 import hexlet.code.app.spring.dto.create.TaskCreateDTO;
 import hexlet.code.app.spring.mapper.TaskMapper;
+import hexlet.code.app.spring.model.Label;
 import hexlet.code.app.spring.model.Task;
 import hexlet.code.app.spring.model.TaskStatus;
+import hexlet.code.app.spring.model.User;
+import hexlet.code.app.spring.repository.LabelRepository;
 import hexlet.code.app.spring.repository.TaskRepository;
 import hexlet.code.app.spring.repository.TaskStatusRepository;
-import hexlet.code.app.utils.TaskStatusUtilsTest;
-import hexlet.code.app.utils.TaskUtilsTest;
+import hexlet.code.app.spring.repository.UserRepository;
+import hexlet.code.app.utils.TestUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,12 +31,14 @@ import java.util.List;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -53,33 +58,45 @@ public class TaskControllerTest {
     private TaskStatusRepository taskStatusRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private LabelRepository labelRepository;
+
+    @Autowired
     private ObjectMapper om;
 
     private SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor token;
-
-    private final TaskUtilsTest testUtils = new TaskUtilsTest();
-
-    private final TaskStatusUtilsTest testTaskStatusUtils = new TaskStatusUtilsTest();
 
     private TaskStatus testTaskStatus;
 
     private Task testTask;
 
+    private Label testLabel;
+
     @BeforeEach
     public void setUp() {
         taskRepository.deleteAll();
         taskStatusRepository.deleteAll();
-        testTaskStatus = testTaskStatusUtils.createTestTaskStatus();
+        userRepository.deleteAll();
+        labelRepository.deleteAll();
+        testTaskStatus = TestUtils.createTestTaskStatus();
+        User testUser = TestUtils.createUser();
+        userRepository.save(testUser);
+        testLabel = TestUtils.createTestLabel();
+        labelRepository.save(testLabel);
         taskStatusRepository.save(testTaskStatus);
-        testTask = testUtils.createTestTask(testTaskStatus);
+        testTask = TestUtils.createTestTask(testTaskStatus);
+        testUser.addTask(testTask);
         taskRepository.save(testTask);
+        testTask.addLabel(testLabel);
         token = jwt().jwt(builder -> builder.subject("test@example.com"));
     }
 
     @Test
     public void testIndex() throws Exception {
         // Создаем еще один статус для проверки списка
-        Task anotherTask = testUtils.createTestTask(testTaskStatus);
+        Task anotherTask = TestUtils.createTestTask(testTaskStatus);
         taskRepository.save(anotherTask);
 
         var result = mockMvc.perform(get("/api/tasks").with(token))
@@ -121,9 +138,7 @@ public class TaskControllerTest {
         var result = taskRepository.findByTitle(createDTO.getTitle())
                 .orElseThrow(() -> ExceptionUtils
                         .throwResourceNotFoundException("task status",
-                                createDTO.getTitle(),
-                                "testCreateTask"
-                        ));
+                                createDTO.getTitle()));
 
         assertNotNull(result);
         assertThat(result.getTitle()).isEqualTo("Уборка");
@@ -174,8 +189,7 @@ public class TaskControllerTest {
         var task = taskRepository.findById(id)
                 .orElseThrow(() -> ExceptionUtils
                         .throwResourceNotFoundException("task status",
-                                id,
-                                "testPartialUpdateTask"));
+                                id));
 
         assertThat(task.getTitle()).isEqualTo("Новая задача");
         assertThat(task.getTaskStatus().getId()).isEqualTo(testTask.getTaskStatus().getId());
@@ -199,8 +213,7 @@ public class TaskControllerTest {
         var task = taskRepository.findById(id)
                 .orElseThrow(() -> ExceptionUtils
                         .throwResourceNotFoundException("task status",
-                                id,
-                                "testUpdateTask"));
+                                id));
 
         assertThat(task.getTitle()).isEqualTo("Новая задача");
         assertThat(task.getTaskStatus().getId()).isEqualTo(testTaskStatus.getId());
@@ -256,8 +269,103 @@ public class TaskControllerTest {
     @Test
     public void testUnauthorizedAccess() throws Exception {
         // Тест без токена
-        var request = get("/api/tasks/1");
+        var request = get("/api/tasks");
         mockMvc.perform(request)
                 .andExpect(status().isUnauthorized());
     }
+
+    @Test
+    public void testFiltersTitleCont() throws Exception {
+        var title = testTask.getTitle();
+        var request = get("/api/tasks?titleCont=" + title).with(token);
+        var result = mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andReturn();
+
+        var body = result.getResponse().getContentAsString();
+        assertThatJson(body)
+                .isArray()
+                .hasSize(1)
+                .first()
+                .and(v -> v.node("id").isEqualTo(testTask.getId()));
+
+        var shortTitle = title.substring(2); // проверка поиска по неполному title
+        var request2 = get("/api/tasks?titleCont=" + shortTitle).with(token);
+        var result2 = mockMvc.perform(request2)
+                .andExpect(status().isOk())
+                .andReturn();
+
+        var body2 = result2.getResponse().getContentAsString();
+        assertThatJson(body2)
+                .isArray()
+                .hasSize(1)
+                .first()
+                .and(v -> v.node("id").isEqualTo(testTask.getId()));    }
+
+    @Test
+    public void testFiltersNotEqualTitleCont() throws Exception {
+        // faker возвращает английский текст, используем русский для гарантированного несоответствия
+        var request = get("/api/tasks?titleCont=Тест").with(token);
+        var result = mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andReturn();
+
+        var body = result.getResponse().getContentAsString();
+        assertThatJson(body)
+                .isArray()
+                .hasSize(0);
+    }
+
+    @Test
+    public void testFiltersAssigneeId() throws Exception {
+        var assigneeId = testTask.getAssignee().getId();
+        var request = get("/api/tasks?assigneeId=" + assigneeId).with(token);
+        var result = mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andReturn();
+
+        var body = result.getResponse().getContentAsString();
+        assertThatJson(body)
+                .isArray()
+                .hasSize(1)
+                .first()
+                .and(v -> v.node("id").isEqualTo(testTask.getId()));
+
+        // Негативный тест - задача с другим assignee
+        var request2 = get("/api/tasks?assigneeId=9999").with(token);
+        mockMvc.perform(request2)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    @Test
+    public void testFiltersStatus() throws Exception {
+        var request = get("/api/tasks?status=" + testTaskStatus.getName()).with(token);
+        var result = mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andReturn();
+
+        var body = result.getResponse().getContentAsString();
+        assertThatJson(body)
+                .isArray()
+                .hasSize(1)
+                .first()
+                .and(v -> v.node("id").isEqualTo(testTask.getId()));
+    }
+
+    @Test
+    public void testFiltersLabelId() throws Exception {
+        var request = get("/api/tasks?labelId=" + testLabel.getId()).with(token);
+        var result = mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andReturn();
+
+        var body = result.getResponse().getContentAsString();
+        assertThatJson(body)
+                .isArray()
+                .hasSize(1)
+                .first()
+                .and(v -> v.node("id").isEqualTo(testTask.getId()));
+    }
+
 }

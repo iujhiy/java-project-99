@@ -34,28 +34,33 @@ public abstract class TaskMapper {
         return taskStatusName != null
                 ? taskStatusRepository.findByName(taskStatusName)
                 .orElseThrow(() -> ExceptionUtils
-                        .throwResourceNotFoundException("task status", taskStatusName, "toTask"))
+                        .throwResourceNotFoundException("task status", taskStatusName))
                 : null;
     }
 
     @Mapping(target = "status", source = "taskStatus")
     @Mapping(target = "assigneeId", source = "assignee")
+    @Mapping(target = "labelIds", source = "labels")
     public abstract TaskDTO map(Task model);
 
     @Mapping(target = "taskStatus", source = "status")
     @Mapping(target = "assignee", source = "assigneeId")
+    @Mapping(target = "labels", source = "labelIds")
     public abstract Task map(TaskCreateDTO dto);
 
     @Mapping(target = "taskStatus", source = "status")
     @Mapping(target = "assignee", source = "assigneeId")
+    @Mapping(target = "labels", source = "labelIds")
     public abstract Task map(TaskDTO dto);
 
     @Mapping(target = "status", source = "taskStatus")
     @Mapping(target = "assigneeId", source = "assignee")
+    @Mapping(target = "labelIds", source = "labels")
     public abstract TaskCreateDTO create(Task model);
 
     @Mapping(target = "taskStatus", source = "status")
     @Mapping(target = "assignee", source = "assigneeId")
+    @Mapping(target = "labels", source = "labelIds")
     public abstract void update(TaskUpdateDTO dto, @MappingTarget Task model);
 
 }

@@ -8,13 +8,9 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class TaskDTO {
+public class LabelDTO {
     private Long id;
-    private Integer index;
-    private String content;
-    private String status;
-    private String title;
-    private Long assigneeId;
-    private Set<Long> labelIds;
+    private String name;
+    private Set<Long> taskIds;
     private LocalDate createdAt;
 }

@@ -7,7 +7,7 @@ import hexlet.code.app.spring.mapper.UserMapper;
 import hexlet.code.app.spring.repository.TaskRepository;
 import hexlet.code.app.spring.repository.UserRepository;
 import hexlet.code.app.spring.model.User;
-import hexlet.code.app.utils.UserUtilsTest;
+import hexlet.code.app.utils.TestUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,22 +53,20 @@ public class UserControllerTest {
 
     private SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor token;
 
-    private final UserUtilsTest userUtils = new UserUtilsTest();
-
     private User testUser;
 
     @BeforeEach
     public void setUp() {
         taskRepository.deleteAll();
         userRepository.deleteAll();
-        testUser = userUtils.createUser();
+        testUser = TestUtils.createUser();
         userRepository.save(testUser);
         token = jwt().jwt(builder -> builder.subject(testUser.getEmail()));
     }
 
     @Test
     public void testIndex() throws Exception {
-        var anotherUser = userUtils.createUser();
+        var anotherUser = TestUtils.createUser();
         mockMvc.perform(post("/api/users")
                 .with(token)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -88,7 +86,7 @@ public class UserControllerTest {
 
     @Test
     public void testCreate() throws Exception {
-        var user = userUtils.createUser();
+        var user = TestUtils.createUser();
         var userCreateDTO = userMapper.create(user);
         var request = post("/api/users")
                 .with(token)
@@ -100,10 +98,7 @@ public class UserControllerTest {
 
         var result = userRepository.findByEmail(userCreateDTO.getEmail())
                 .orElseThrow(() -> ExceptionUtils
-                        .throwResourceNotFoundException("user",
-                                userCreateDTO.getEmail(),
-                                "testCreateUser"
-                        ));
+                        .throwResourceNotFoundException("user", userCreateDTO.getEmail()));
         assertNotNull(result);
         assertThat(userCreateDTO.getFirstName()).isEqualTo(result.getFirstName());
         assertThat(userCreateDTO.getLastName()).isEqualTo(result.getLastName());
@@ -124,7 +119,7 @@ public class UserControllerTest {
                 .andExpect(status().isOk());
 
         var user = userRepository.findById(id)
-                .orElseThrow(() -> ExceptionUtils.throwResourceNotFoundException("user", id, "testUpdateUser"));
+                .orElseThrow(() -> ExceptionUtils.throwResourceNotFoundException("user", id));
         assertThat(user.getFirstName()).isEqualTo("John");
     }
 

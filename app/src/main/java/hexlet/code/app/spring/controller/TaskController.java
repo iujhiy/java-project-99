@@ -2,11 +2,13 @@ package hexlet.code.app.spring.controller;
 
 import hexlet.code.app.spring.dto.TaskDTO;
 import hexlet.code.app.spring.dto.create.TaskCreateDTO;
+import hexlet.code.app.spring.dto.parametres.TaskParamsDTO;
 import hexlet.code.app.spring.dto.update.TaskUpdateDTO;
 import hexlet.code.app.spring.service.TaskService;
+import hexlet.code.app.spring.specification.TaskSpecification;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,7 +23,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -29,16 +30,16 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
+    @Autowired
+    private TaskSpecification taskSpecification;
+
     @GetMapping
-//    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<TaskDTO>> index(@RequestParam(defaultValue = "5") Integer size,
-                                                     @RequestParam(defaultValue = "1") Integer number) {
-        var page = taskService.getAll(number, size);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", String.valueOf(page.size()));
-        headers.add("Access-Control-Expose-Headers", "X-Total-Count");
-        return ResponseEntity.ok().headers(headers).body(page);
-//        return taskService.getAll(number, size);
+    @ResponseStatus(HttpStatus.OK)
+    public Page<TaskDTO> index(@RequestParam(defaultValue = "5") Integer size,
+                               @RequestParam(defaultValue = "1") Integer number,
+                               TaskParamsDTO dto) {
+        var spec = taskSpecification.build(dto);
+        return taskService.getAll(spec, number, size);
     }
 
     @GetMapping("/{id}")
