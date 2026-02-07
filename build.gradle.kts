@@ -50,7 +50,7 @@ application {
 
 sonar {
     properties {
-        property("sonar.projectKey", "iujhiy_java-project-72")
+        property("sonar.projectKey", "iujhiy_java-project-99")
         property("sonar.organization", "iujhiy")
         property("sonar.host.url", "https://sonarcloud.io")
     }
