@@ -36,5 +36,3 @@ out/
 ### VS Code ###
 .vscode/
 /node_modules/
-
-src/main/resources/certs/private.pem
