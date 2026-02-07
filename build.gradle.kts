@@ -6,7 +6,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
     id("io.freefair.lombok") version "8.6"
     id("org.sonarqube") version "7.0.1.6134"
-    id("io.sentry.jvm.gradle") version "6.0.0"
+//    id("io.sentry.jvm.gradle") version "6.0.0"
 }
 
 group = "hexlet.code"
@@ -70,12 +70,12 @@ jacoco {
     reportsDirectory = layout.buildDirectory.dir("customJacocoReportDir")
 }
 
-sentry {
-    includeSourceContext = true
-    org = "nikita-4p"
-    projectName = "java-spring-boot"
-    authToken = System.getenv("SENTRY_AUTH_TOKEN")
-}
+//sentry {
+//    includeSourceContext = true
+//    org = "nikita-4p"
+//    projectName = "java-spring-boot"
+//    authToken = System.getenv("SENTRY_AUTH_TOKEN")
+//}
 
 tasks.test {
     useJUnitPlatform()

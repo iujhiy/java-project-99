@@ -7,7 +7,7 @@ clean:
 	./gradlew clean
 
 build:
-	./gradlew clean build -x sentryUploadSourceBundleJava
+	./gradlew clean build
 
 install:
 	./gradlew clean install
