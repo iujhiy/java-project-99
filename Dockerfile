@@ -2,7 +2,7 @@ FROM gradle:9.0.0-jdk21
 
 WORKDIR /app
 
-COPY /app .
+COPY . .
 
 RUN gradle installDist
 
