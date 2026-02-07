@@ -1,5 +1,5 @@
 HELP.md
-app/.gradle
+.gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
@@ -36,3 +36,5 @@ out/
 ### VS Code ###
 .vscode/
 /node_modules/
+
+src/main/resources/certs/private.pem
