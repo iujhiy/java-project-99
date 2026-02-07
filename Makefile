@@ -1,32 +1,38 @@
+.DEFAULT_GOAL := build-run
+
 setup:
-	make -C app setup
+	./gradlew wrapper --gradle-version 9.0
 
 clean:
-	make -C app clean
+	./gradlew clean
 
 build:
-	make -C app build
+	./gradlew clean build
 
 install:
-	make -C app install
+	./gradlew clean install
 
 run-dist:
-	make -C app run-dist
+	./build/install/app/bin/app
 
 run:
-	make -C app run
+	./gradlew bootRun
 
 test:
-	make -C app test
+	./gradlew test
 
 report:
-	make -C app report
+	./gradlew jacocoTestReport
 
 lint:
-	make -C app lint
+	./gradlew checkstyleMain
 
 check-deps:
-	make -C app check-deps
+	./gradlew dependencyUpdates -Drevision=release
 
 sonar-run:
-	make -C app sonar-run
+	./gradlew build sonar --info
+
+build-run: build run
+
+.PHONY: build

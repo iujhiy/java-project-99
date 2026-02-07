@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.spring.dto.TaskStatusDTO;
 import hexlet.code.spring.dto.create.TaskStatusCreateDTO;
-import hexlet.code.spring.mapper.TaskStatusMapper;
 import hexlet.code.spring.model.TaskStatus;
 import hexlet.code.spring.repository.TaskRepository;
 import hexlet.code.spring.repository.TaskStatusRepository;
