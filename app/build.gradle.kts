@@ -45,7 +45,7 @@ dependencies {
 }
 
 application {
-    mainClass = "hexlet.code.app.spring.AppApplication"
+    mainClass = "hexlet.code.AppApplication"
 }
 
 sonar {

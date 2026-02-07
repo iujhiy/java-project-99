@@ -1,6 +1,6 @@
 package utils;
 
-import hexlet.code.app.spring.exception.ResourceNotFoundException;
+import hexlet.code.spring.exception.ResourceNotFoundException;
 
 public class ExceptionUtils {
     public static ResourceNotFoundException throwResourceNotFoundException(
@@ -11,7 +11,7 @@ public class ExceptionUtils {
     public static ResourceNotFoundException throwResourceNotFoundException(
             String entityName, String email) {
         throw new ResourceNotFoundException(
-                entityName + " with email '" + email + "' not found"
+                entityName + " with name '" + email + "' not found"
         );
     }
 }
