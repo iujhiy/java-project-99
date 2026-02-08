@@ -1,0 +1,14 @@
+spring:
+  profiles: production
+
+  datasource:
+    url: ${JDBC_DATABASE_URL}
+    username: ${USERNAME:postgres}
+    password: ${PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+    show-sql: false

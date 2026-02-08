@@ -1,0 +1,22 @@
+spring:
+  jpa:
+    show-sql: true       # вывод SQL-запросов
+    hibernate:
+      ddl-auto: update
+  output:
+    ansi:
+      enabled: always    # цветной вывод логотипа
+
+logging:
+  pattern:
+    dateformat: "yyyy-MM-dd"  # кастомный формат даты в логах
+
+rsa:
+  private-key: classpath:certs/private.pem
+  public-key: classpath:certs/public.pem
+
+sentry:
+  dsn: https://709ea244eb663c75dd2faec618795f47@o4510838173925376.ingest.de.sentry.io/4510838177857616
+  # Add data like request headers and IP for users,
+  # see https://docs.sentry.io/platforms/java/guides/spring-boot/data-management/data-collected/ for more info
+  send-default-pii: true
