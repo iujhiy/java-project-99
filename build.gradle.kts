@@ -52,6 +52,13 @@ sonar {
     properties {
         property("sonar.projectKey", "iujhiy_java-project-99")
         property("sonar.organization", "iujhiy")
+        property("sonar.sources", "src/main/java")
+        property("sonar.tests", "src/test/java")
+        property("sonar.java.binaries", "build/classes/java/main")
+        property("sonar.java.test.binaries", "build/classes/java/test")
+        property("sonar.java.libraries", "build/libs/*.jar")
+        property("sonar.coverage.jacoco.xmlReportPaths",
+            "build/customJacocoReportDir/test/jacocoTestReport.xml")
     }
 }
 
