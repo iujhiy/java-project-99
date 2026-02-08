@@ -1,7 +1,6 @@
 package hexlet.code.spring.config;
 
 import hexlet.code.spring.service.CustomUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,26 +24,12 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private CustomUserDetailsService userService;
-
-    @Autowired
-    private JwtDecoder jwtDecoder;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   JwtDecoder jwtDecoder,
                                                    HandlerMappingIntrospector introspector)
             throws Exception {
-//        http
-//                .authorizeHttpRequests(auth -> auth
-//                        // Временно разрешить ВСЕ запросы
-//                        .anyRequest().permitAll()
-//                );
-//
-//        return http.build();
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
@@ -81,7 +66,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider daoAuthProvider(AuthenticationManagerBuilder auth) {
+    public AuthenticationProvider daoAuthProvider(AuthenticationManagerBuilder auth,
+                                                  PasswordEncoder passwordEncoder,
+                                                  CustomUserDetailsService userService) {
         var provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userService);
         provider.setPasswordEncoder(passwordEncoder);

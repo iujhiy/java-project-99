@@ -59,7 +59,7 @@ public class User implements BaseEntity, UserDetails {
             cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @OnDelete(action = OnDeleteAction.RESTRICT)
     @JsonIgnore
-    private Set<Task> tasks = new HashSet<>();
+    private transient Set<Task> tasks = new HashSet<>();
 
     public void addTask(Task task) {
         tasks.add(task);
