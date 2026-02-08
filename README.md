@@ -1,6 +1,5 @@
 ### Hexlet tests and linter status:
-[![Actions Status](https://github.com/iujhiy/java-project-99/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/iujhiy/java-project-99/actions)
-[![SonarQube](https://github.com/iujhiy/java-project-99/actions/workflows/build.yml/badge.svg)](https://github.com/iujhiy/java-project-99/actions/workflows/build.yml)
+[![hexlet-check](https://github.com/iujhiy/java-project-99/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/iujhiy/java-project-99/actions/workflows/hexlet-check.yml)[![SonarQube](https://github.com/iujhiy/java-project-99/actions/workflows/build.yml/badge.svg)](https://github.com/iujhiy/java-project-99/actions/workflows/build.yml)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=iujhiy_java-project-99&metric=bugs)](https://sonarcloud.io/summary/new_code?id=iujhiy_java-project-99)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=iujhiy_java-project-99&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=iujhiy_java-project-99)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=iujhiy_java-project-99&metric=coverage)](https://sonarcloud.io/summary/new_code?id=iujhiy_java-project-99)
