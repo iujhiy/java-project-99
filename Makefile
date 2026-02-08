@@ -31,7 +31,7 @@ check-deps:
 	./gradlew dependencyUpdates -Drevision=release
 
 sonar-run:
-	./gradlew build sonar --info
+	./gradlew build sonar
 
 build-run: build run
 
