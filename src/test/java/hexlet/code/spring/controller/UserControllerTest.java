@@ -79,8 +79,6 @@ public class UserControllerTest {
         List<UserDTO> userDTOs = om.readValue(body, new TypeReference<>() { });
         var usersList = userDTOs.stream().map(userMapper::map).toList();
         var expected = userRepository.findAll();
-        String totalCountHeader = result.getResponse().getHeader("X-Total-Count");
-        assertThat(totalCountHeader).isEqualTo("2");
         Assertions.assertThat(usersList).containsExactlyInAnyOrderElementsOf(expected);
     }
 

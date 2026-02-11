@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class LabelDTO {
+public class LabelDTO implements BaseEntityDTO {
     private Long id;
     private String name;
     private LocalDate createdAt;

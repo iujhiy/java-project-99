@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class TaskUpdateDTO {
+public class TaskUpdateDTO implements BaseEntityUpdateDTO {
     private JsonNullable<Integer> index = JsonNullable.undefined();
 
     private JsonNullable<Set<Long>> taskLabelIds;

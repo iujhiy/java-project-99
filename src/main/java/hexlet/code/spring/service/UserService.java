@@ -5,7 +5,7 @@ import hexlet.code.spring.dto.create.UserCreateDTO;
 import hexlet.code.spring.dto.update.UserUpdateDTO;
 import hexlet.code.spring.mapper.UserMapper;
 import hexlet.code.spring.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import utils.ExceptionUtils;
 
@@ -13,26 +13,23 @@ import java.util.List;
 
 
 @Service
-public class UserService {
-    @Autowired
+@AllArgsConstructor
+public class UserService implements BaseEntityService<UserDTO, UserCreateDTO, UserUpdateDTO> {
     private UserRepository userRepository;
-
-    @Autowired
     private UserMapper userMapper;
 
     public List<UserDTO> getAll() {
-//        var pageRequest = PageRequest.of(number - 1, size);
         return userRepository.findAll().stream().map(userMapper::map).toList();
     }
 
-    public UserDTO getUserDTO(Long id) {
+    public UserDTO show(Long id) {
         var user = userRepository.findById(id)
                 .orElseThrow(() -> ExceptionUtils
                         .throwResourceNotFoundException("user", id));
         return userMapper.map(user);
     }
 
-    public UserDTO createUserDTO(UserCreateDTO dto) {
+    public UserDTO create(UserCreateDTO dto) {
         var user = userMapper.map(dto);
         userRepository.save(user);
         return userMapper.map(user);
@@ -47,7 +44,7 @@ public class UserService {
         return userMapper.map(user);
     }
 
-    public void deleteUser(Long id) {
+    public void delete(Long id) {
         userRepository.deleteById(id);
     }
 

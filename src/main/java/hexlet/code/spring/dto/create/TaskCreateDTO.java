@@ -9,10 +9,9 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class TaskCreateDTO {
+public class TaskCreateDTO implements BaseEntityCreateDTO {
 
     private Integer index;
-
 
     @JsonProperty("title")
     @NotBlank

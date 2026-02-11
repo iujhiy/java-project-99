@@ -4,9 +4,9 @@ package hexlet.code.spring.controller;
 import hexlet.code.spring.dto.TaskStatusDTO;
 import hexlet.code.spring.dto.create.TaskStatusCreateDTO;
 import hexlet.code.spring.dto.update.TaskStatusUpdateDTO;
-import hexlet.code.spring.service.TaskStatusService;
+import hexlet.code.spring.service.BaseEntityService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +26,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/task_statuses")
+@AllArgsConstructor
 public class TaskStatusController {
-    @Autowired
-    private TaskStatusService taskStatusService;
+    private final BaseEntityService<TaskStatusDTO,
+            TaskStatusCreateDTO,
+            TaskStatusUpdateDTO> taskStatusService;
 
     @GetMapping
     public ResponseEntity<List<TaskStatusDTO>> index(@RequestParam(defaultValue = "5") Integer size,
@@ -43,12 +45,12 @@ public class TaskStatusController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public TaskStatusDTO show(@PathVariable Long id) {
-        return taskStatusService.getTaskStatusDTO(id);
+        return taskStatusService.show(id);
     }
 
     @PostMapping
     public ResponseEntity<TaskStatusDTO> create(@Valid @RequestBody TaskStatusCreateDTO dto) {
-        var taskStatusDTO = taskStatusService.createTaskStatusDTO(dto);
+        var taskStatusDTO = taskStatusService.create(dto);
         return ResponseEntity
                 .created(URI.create("api/taskStatuss/" + taskStatusDTO.getId()))
                 .body(taskStatusDTO);
@@ -64,6 +66,6 @@ public class TaskStatusController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(@PathVariable Long id) {
-        taskStatusService.deleteTaskStatus(id);
+        taskStatusService.delete(id);
     }
 }

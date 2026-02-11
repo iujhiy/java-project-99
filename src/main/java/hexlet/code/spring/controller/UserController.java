@@ -3,10 +3,10 @@ package hexlet.code.spring.controller;
 import hexlet.code.spring.dto.UserDTO;
 import hexlet.code.spring.dto.create.UserCreateDTO;
 import hexlet.code.spring.dto.update.UserUpdateDTO;
-import hexlet.code.spring.service.UserService;
+import hexlet.code.spring.service.BaseEntityService;
 import hexlet.code.spring.util.UserUtils;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,12 +27,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
+@AllArgsConstructor
 public class UserController {
-    @Autowired
-    private UserService userService;
+    private final BaseEntityService<UserDTO, UserCreateDTO, UserUpdateDTO> userService;
 
-    @Autowired
-    private UserUtils userUtils;
+    private final UserUtils userUtils;
 
     @GetMapping
     public ResponseEntity<List<UserDTO>> index(@RequestParam(defaultValue = "5") Integer size,
@@ -47,12 +46,12 @@ public class UserController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public UserDTO show(@PathVariable Long id) {
-        return userService.getUserDTO(id);
+        return userService.show(id);
     }
 
     @PostMapping
     public ResponseEntity<UserDTO> create(@Valid @RequestBody UserCreateDTO dto) {
-        var userDTO = userService.createUserDTO(dto);
+        var userDTO = userService.create(dto);
         return ResponseEntity
                 .created(URI.create("api/users/" + userDTO.getId()))
                 .body(userDTO);
@@ -70,7 +69,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@userUtils.isCurrentUser(#id)")
     public void destroy(@PathVariable Long id) {
-        userService.deleteUser(id);
+        userService.delete(id);
     }
 
 }

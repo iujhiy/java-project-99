@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class TaskStatusCreateDTO {
+public class TaskStatusCreateDTO implements BaseEntityCreateDTO {
     @NotBlank
     private String name;
 

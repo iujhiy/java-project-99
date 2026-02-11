@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class TaskDTO {
+public class TaskDTO implements BaseEntityDTO {
     private Long id;
 
     private Set<Long> taskLabelIds;

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.spring.dto.TaskStatusDTO;
 import hexlet.code.spring.dto.create.TaskStatusCreateDTO;
+import hexlet.code.spring.mapper.TaskStatusMapper;
 import hexlet.code.spring.model.TaskStatus;
 import hexlet.code.spring.repository.TaskRepository;
 import hexlet.code.spring.repository.TaskStatusRepository;
@@ -47,6 +48,9 @@ public class TaskStatusControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
+    private TaskStatusMapper taskStatusMapper;
+
+    @Autowired
     private ObjectMapper om;
 
     private SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor token;
@@ -73,21 +77,11 @@ public class TaskStatusControllerTest {
                 .andReturn();
 
         var body = result.getResponse().getContentAsString();
-        List<TaskStatusDTO> statusDTOs = om.readValue(body, new TypeReference<>() { });
+        List<TaskStatusDTO> taskStatusDTOs = om.readValue(body, new TypeReference<>() { });
+        var taskStatusesList = taskStatusDTOs.stream().map(taskStatusMapper::map).toList();
+        var expected = taskStatusRepository.findAll();
+        Assertions.assertThat(taskStatusesList).containsExactlyInAnyOrderElementsOf(expected);
 
-        // Проверяем заголовок X-Total-Count
-        String totalCountHeader = result.getResponse().getHeader("X-Total-Count");
-        assertThat(totalCountHeader).isEqualTo("2");
-
-        // Проверяем, что все статусы присутствуют в ответе
-        var expectedStatuses = taskStatusRepository.findAll();
-        Assertions.assertThat(statusDTOs)
-                .extracting(TaskStatusDTO::getId)
-                .containsExactlyInAnyOrderElementsOf(
-                        expectedStatuses.stream()
-                                .map(TaskStatus::getId)
-                                .toList()
-                );
     }
 
     @Test

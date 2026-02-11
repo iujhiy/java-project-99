@@ -7,6 +7,7 @@ import hexlet.code.spring.dto.update.TaskUpdateDTO;
 import hexlet.code.spring.service.TaskService;
 import hexlet.code.spring.specification.TaskSpecification;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,9 +28,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/tasks")
+@AllArgsConstructor
 public class TaskController {
-    @Autowired
-    private TaskService taskService;
+    private final TaskService taskService;
 
     @Autowired
     private TaskSpecification taskSpecification;
@@ -50,12 +51,12 @@ public class TaskController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public TaskDTO show(@PathVariable Long id) {
-        return taskService.getTaskDTO(id);
+        return taskService.show(id);
     }
 
     @PostMapping
     public ResponseEntity<TaskDTO> create(@Valid @RequestBody TaskCreateDTO dto) {
-        var taskDTO = taskService.createTaskDTO(dto);
+        var taskDTO = taskService.create(dto);
         return ResponseEntity
                 .created(URI.create("api/tasks/" + taskDTO.getId()))
                 .body(taskDTO);
@@ -71,6 +72,6 @@ public class TaskController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(@PathVariable Long id) {
-        taskService.deleteTask(id);
+        taskService.delete(id);
     }
 }

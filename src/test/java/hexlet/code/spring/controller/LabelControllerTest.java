@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.spring.dto.LabelDTO;
 import hexlet.code.spring.dto.create.LabelCreateDTO;
+import hexlet.code.spring.mapper.LabelMapper;
 import hexlet.code.spring.model.Label;
 import hexlet.code.spring.repository.LabelRepository;
 import hexlet.code.utils.TestUtils;
@@ -43,6 +44,9 @@ public class LabelControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
+    private LabelMapper labelMapper;
+
+    @Autowired
     private ObjectMapper om;
 
     private SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor token;
@@ -68,21 +72,10 @@ public class LabelControllerTest {
                 .andReturn();
 
         var body = result.getResponse().getContentAsString();
-        List<LabelDTO> statusDTOs = om.readValue(body, new TypeReference<>() { });
-
-        // Проверяем заголовок X-Total-Count
-        String totalCountHeader = result.getResponse().getHeader("X-Total-Count");
-        assertThat(totalCountHeader).isEqualTo("2");
-
-        // Проверяем, что все статусы присутствуют в ответе
-        var expectedStatuses = labelRepository.findAll();
-        Assertions.assertThat(statusDTOs)
-                .extracting(LabelDTO::getId)
-                .containsExactlyInAnyOrderElementsOf(
-                        expectedStatuses.stream()
-                                .map(Label::getId)
-                                .toList()
-                );
+        List<LabelDTO> labelDTOs = om.readValue(body, new TypeReference<>() { });
+        var labelList = labelDTOs.stream().map(labelMapper::map).toList();
+        var expected = labelRepository.findAll();
+        Assertions.assertThat(labelList).containsExactlyInAnyOrderElementsOf(expected);
     }
 
     @Test

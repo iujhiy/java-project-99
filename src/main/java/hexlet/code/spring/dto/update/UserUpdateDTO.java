@@ -9,7 +9,7 @@ import org.openapitools.jackson.nullable.JsonNullable;
 
 @Getter
 @Setter
-public class UserUpdateDTO {
+public class UserUpdateDTO implements BaseEntityUpdateDTO {
     @NotBlank
     private JsonNullable<String> firstName = JsonNullable.undefined();
 

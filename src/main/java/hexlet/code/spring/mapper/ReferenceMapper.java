@@ -5,13 +5,14 @@ import hexlet.code.spring.model.Label;
 import hexlet.code.spring.model.Task;
 import hexlet.code.spring.model.User;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.TargetType;
 import org.openapitools.jackson.nullable.JsonNullable;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
         componentModel = MappingConstants.ComponentModel.SPRING
 )
 public class ReferenceMapper {
-    @Autowired
+    @PersistenceContext
     private EntityManager entityManager;
 
     public Set<Task> toTask(JsonNullable<Set<Long>> jsonSet) {
@@ -50,9 +51,20 @@ public class ReferenceMapper {
         if (valueSet.isEmpty()) {
             return new HashSet<>();
         }
-        return valueSet.stream()
-                .map(value -> toEntity(value, entityClass))
+
+        Set<Long> ids = valueSet.stream()
+                .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
+
+        if (ids.isEmpty()) {
+            return new HashSet<>();
+        }
+        var resultList = entityManager
+                .createQuery("SELECT e FROM " + entityClass.getSimpleName() + " e WHERE e.id IN :ids",
+                        entityClass)
+                .setParameter("ids", ids)
+                .getResultList();
+        return new HashSet<>(resultList);
     }
 
     public <T extends BaseEntity> Long toId(T entity) {

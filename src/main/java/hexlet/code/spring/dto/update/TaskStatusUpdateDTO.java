@@ -7,7 +7,7 @@ import org.openapitools.jackson.nullable.JsonNullable;
 
 @Getter
 @Setter
-public class TaskStatusUpdateDTO {
+public class TaskStatusUpdateDTO implements BaseEntityUpdateDTO {
     @NotBlank
     private JsonNullable<String> name = JsonNullable.undefined();
 

@@ -1,6 +1,5 @@
 package hexlet.code.spring.dto.create;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -9,13 +8,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserCreateDTO {
+public class UserCreateDTO implements BaseEntityCreateDTO {
     private String firstName;
 
     private String lastName;
 
     @Email
-    @Column(unique = true)
     private String email;
 
     @NotBlank
