@@ -1,5 +1,6 @@
 package hexlet.code.spring.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,8 @@ public class TaskDTO implements BaseEntityDTO {
     private Set<Long> taskLabelIds;
 
     private Integer index;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate createdAt;
 
     @JsonProperty("assignee_id")
